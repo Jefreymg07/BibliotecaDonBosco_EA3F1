@@ -1,0 +1,17 @@
+# Ignorar configuración privada de NetBeans
+nbproject/private/
+build/
+dist/
+build.xml
+nbproject/private/private.properties
+nbproject/private/private.xml
+
+# Ignorar archivos temporales del IDE
+*.class
+*.jar
+*.log
+
+# Ignorar carpetas del sistema
+.DS_Store
+Thumbs.db
+
