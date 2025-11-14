@@ -2,12 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package form;
+package sv.edu.udb.conexion;
 
 /**
  *
  * @author Jefrey
  */
-public class PrestamoForm {
+public class Conexion {
     
 }
