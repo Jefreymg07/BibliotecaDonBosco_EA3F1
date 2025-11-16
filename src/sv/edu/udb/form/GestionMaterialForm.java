@@ -4,13 +4,51 @@
  */
 package sv.edu.udb.form;
 
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import java.awt.CardLayout;
+
+import sv.edu.udb.entities.Material;
+import sv.edu.udb.entities.MaterialEscrito;
+import sv.edu.udb.entities.MaterialAudiovisual;
+
+
+
 
 /**
  *
  * @author i5 13400F
  */
 public class GestionMaterialForm extends javax.swing.JFrame {
+
+    // Lista para almacenar los materiales
+private ArrayList<Material> listaMateriales = new ArrayList<>();
+
+/**
+ * Genera un código único por tipo:
+ * Escrito -> ESR0001, ESR0002...
+ * Audiovisual -> AUD0001, AUD0002...
+ */
+private String generateCode(String tipo) {
+    String prefix = "AUD";
+    if (tipo != null && tipo.equalsIgnoreCase("Escrito")) {
+        prefix = "ESR";
+    }
+
+    int max = 0;
+    for (Material m : listaMateriales) {
+        if (m != null && m.getCodigo() != null && m.getCodigo().startsWith(prefix)) {
+            String numPart = m.getCodigo().substring(prefix.length());
+            try {
+                int v = Integer.parseInt(numPart);
+                if (v > max) max = v;
+            } catch (NumberFormatException e) {
+                // ignora formatos raros
+            }
+        }
+    }
+    return String.format("%s%04d", prefix, max + 1);
+}
 
     /**
      * Creates new form GestionMaterialForm
@@ -64,15 +102,10 @@ public class GestionMaterialForm extends javax.swing.JFrame {
         jLabel1.setText("Codigo ");
 
         txtCodigo.setEditable(false);
-        txtCodigo.setText("jTextField1");
 
         jLabel2.setText("Titulo");
 
         jLabel3.setText("Año");
-
-        txtAnio.setText("jTextField1");
-
-        txtTitulo.setText("jTextField2");
 
         jLabel4.setText("Tipo");
 
@@ -84,12 +117,32 @@ public class GestionMaterialForm extends javax.swing.JFrame {
         });
 
         btnRegistrar.setText("Registrar");
+        btnRegistrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistrarActionPerformed(evt);
+            }
+        });
 
         btnActualizar.setText("Actualizar");
+        btnActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnActualizarActionPerformed(evt);
+            }
+        });
 
         btnBuscar.setText("Buscar");
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarActionPerformed(evt);
+            }
+        });
 
         btnLimpiar.setText("Limpiar");
+        btnLimpiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimpiarActionPerformed(evt);
+            }
+        });
 
         btnEliminar.setText("Eliminar");
         btnEliminar.addActionListener(new java.awt.event.ActionListener() {
@@ -104,28 +157,21 @@ public class GestionMaterialForm extends javax.swing.JFrame {
 
         jLabel5.setText("Autor:");
         panelEscrito.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 30, -1, -1));
-
-        txtAutor.setText("jTextField1");
-        panelEscrito.add(txtAutor, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 30, -1, -1));
+        panelEscrito.add(txtAutor, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 30, 100, -1));
 
         jLabel6.setText("Género:");
         panelEscrito.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, -1, -1));
 
-        txtGenero.setText("jTextField1");
         txtGenero.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtGeneroActionPerformed(evt);
             }
         });
-        panelEscrito.add(txtGenero, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 70, -1, -1));
+        panelEscrito.add(txtGenero, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 70, 100, -1));
 
         lblFormato.setText("Formato:");
 
-        txtFormato.setText("jTextField1");
-
         lblDuracion.setText("Duración:");
-
-        txtDuracion.setText("jTextField1");
 
         javax.swing.GroupLayout panelAudioLayout = new javax.swing.GroupLayout(panelAudio);
         panelAudio.setLayout(panelAudioLayout);
@@ -135,14 +181,14 @@ public class GestionMaterialForm extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(panelAudioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelAudioLayout.createSequentialGroup()
+                        .addComponent(lblDuracion)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
+                        .addComponent(txtDuracion, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panelAudioLayout.createSequentialGroup()
                         .addComponent(lblFormato)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txtFormato, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(panelAudioLayout.createSequentialGroup()
-                        .addComponent(lblDuracion)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
-                        .addComponent(txtDuracion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(38, 38, 38))
+                        .addComponent(txtFormato, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(15, 15, 15))
         );
         panelAudioLayout.setVerticalGroup(
             panelAudioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -188,10 +234,10 @@ public class GestionMaterialForm extends javax.swing.JFrame {
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addGroup(layout.createSequentialGroup()
                                     .addGap(60, 60, 60)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(txtAnio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(txtTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(txtCodigo, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
+                                        .addComponent(txtTitulo)
+                                        .addComponent(txtAnio)))
                                 .addGroup(layout.createSequentialGroup()
                                     .addGap(42, 42, 42)
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -249,12 +295,318 @@ public class GestionMaterialForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-        // TODO add your handling code here:
+         String codigo = txtCodigo.getText().trim();
+
+    if (codigo.isEmpty()) {
+        JOptionPane.showMessageDialog(this,
+                "Debe ingresar un código para eliminar.",
+                "Validación", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    // Buscar el material por código
+    Material encontrado = null;
+    for (Material m : listaMateriales) {
+        if (m.getCodigo().equalsIgnoreCase(codigo)) {
+            encontrado = m;
+            break;
+        }
+    }
+
+    if (encontrado == null) {
+        JOptionPane.showMessageDialog(this,
+                "No se encontró un material con ese código.",
+                "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    // Confirmación
+    int confirm = JOptionPane.showConfirmDialog(this,
+            "¿Está seguro de eliminar este material?",
+            "Confirmar eliminación",
+            JOptionPane.YES_NO_OPTION);
+
+    if (confirm == JOptionPane.YES_OPTION) {
+
+        listaMateriales.remove(encontrado);
+
+        JOptionPane.showMessageDialog(this,
+                "Material eliminado correctamente.",
+                "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+        // Limpiar campos después de eliminar
+        txtCodigo.setText("");
+        txtTitulo.setText("");
+        txtAnio.setText("");
+        txtAutor.setText("");
+        txtGenero.setText("");
+        txtFormato.setText("");
+        txtDuracion.setText("");
+    }// TODO add your handling code here:
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void txtGeneroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtGeneroActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtGeneroActionPerformed
+
+    private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
+         try {
+        // 1. Leer datos comunes
+        String titulo = txtTitulo.getText().trim();
+        String tipo = jComboBox1.getSelectedItem().toString();
+        int anio = Integer.parseInt(txtAnio.getText().trim());
+
+        // 2. Validaciones básicas
+        if (titulo.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "El título no puede estar vacío.", "Validación", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // 3. Generar Código
+        String codigo = generateCode(tipo);
+
+        // 4. Crear material según el tipo
+        Material material;
+
+        if (tipo.equalsIgnoreCase("Escrito")) {
+
+            String autor = txtAutor.getText().trim();
+            String genero = txtGenero.getText().trim();
+
+            if (autor.isEmpty() || genero.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Debe completar Autor y Género.", "Validación", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // Crear material escrito
+            MaterialEscrito me = new MaterialEscrito(codigo, titulo, anio, "Escrito", autor, genero);
+            material = me;
+
+        } else {
+
+            String formato = txtFormato.getText().trim();
+            String durText = txtDuracion.getText().trim();
+
+            if (formato.isEmpty() || durText.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Debe completar Formato y Duración.", "Validación", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            int duracion = Integer.parseInt(durText);
+
+            // Crear material audiovisual
+            MaterialAudiovisual ma = new MaterialAudiovisual(codigo, titulo, anio, "Audiovisual", formato, duracion);
+            material = ma;
+        }
+
+        // 5. Guardar en la lista
+        listaMateriales.add(material);
+
+        // 6. Mostrar código generado
+        txtCodigo.setText(codigo);
+
+        JOptionPane.showMessageDialog(this,
+            "Material registrado correctamente\nCódigo: " + codigo,
+            "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+    } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(this, "Año y duración deben ser valores numéricos.", "Error", JOptionPane.ERROR_MESSAGE);
+    } catch (Exception ex) {
+        JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }// TODO add your handling code here:
+    }//GEN-LAST:event_btnRegistrarActionPerformed
+
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+         String codigoBuscar = txtCodigo.getText().trim();
+
+    if (codigoBuscar.isEmpty()) {
+        JOptionPane.showMessageDialog(this, 
+                "Ingrese un código para buscar.", 
+                "Validación", 
+                JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    // Buscar material en la lista
+    Material encontrado = null;
+    for (Material m : listaMateriales) {
+        if (m.getCodigo().equalsIgnoreCase(codigoBuscar)) {
+            encontrado = m;
+            break;
+        }
+    }
+
+    if (encontrado == null) {
+        JOptionPane.showMessageDialog(this, 
+                "No se encontró un material con ese código.",
+                "Resultado",
+                JOptionPane.INFORMATION_MESSAGE);
+        return;
+    }
+
+    // Cargar datos en pantalla
+    txtTitulo.setText(encontrado.getTitulo());
+    txtAnio.setText(String.valueOf(encontrado.getAnio()));
+    jComboBox1.setSelectedItem(encontrado.getTipo());
+
+    if (encontrado instanceof MaterialEscrito) {
+        MaterialEscrito me = (MaterialEscrito) encontrado;
+        txtAutor.setText(me.getAutor());
+        txtGenero.setText(me.getGenero());
+
+        panelEscrito.setVisible(true);
+        panelAudio.setVisible(false);
+
+    } else {
+        MaterialAudiovisual ma = (MaterialAudiovisual) encontrado;
+        txtFormato.setText(ma.getFormato());
+        txtDuracion.setText(String.valueOf(ma.getDuracion()));
+
+        panelEscrito.setVisible(false);
+        panelAudio.setVisible(true);
+    }
+
+    JOptionPane.showMessageDialog(this, 
+            "Material encontrado y cargado.",
+            "Éxito",
+            JOptionPane.INFORMATION_MESSAGE);// TODO add your handling code here:
+    }//GEN-LAST:event_btnBuscarActionPerformed
+
+    private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
+        try {
+        String codigo = txtCodigo.getText().trim();
+        if (codigo.isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                    "Debe ingresar un código para actualizar.", 
+                    "Validación", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Buscar en la lista
+        Material encontrado = null;
+        for (Material m : listaMateriales) {
+            if (m.getCodigo().equalsIgnoreCase(codigo)) {
+                encontrado = m;
+                break;
+            }
+        }
+
+        if (encontrado == null) {
+            JOptionPane.showMessageDialog(this, 
+                    "No se encontró un material con ese código.", 
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Datos comunes
+        String titulo = txtTitulo.getText().trim();
+        String anioTxt = txtAnio.getText().trim();
+        String tipo = jComboBox1.getSelectedItem().toString();
+
+        if (titulo.isEmpty() || anioTxt.isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                    "Debe completar Título y Año.", 
+                    "Validación", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int anio = Integer.parseInt(anioTxt);
+
+        // Actualizar campos comunes
+        encontrado.setTitulo(titulo);
+        encontrado.setAnio(anio);
+        encontrado.setTipo(tipo);
+
+        // Dependiendo del tipo
+        if (tipo.equalsIgnoreCase("Escrito")) {
+
+            String autor = txtAutor.getText().trim();
+            String genero = txtGenero.getText().trim();
+
+            if (autor.isEmpty() || genero.isEmpty()) {
+                JOptionPane.showMessageDialog(this, 
+                        "Debe completar Autor y Género.", 
+                        "Validación", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // Convertimos el objeto al tipo correcto
+            if (encontrado instanceof MaterialEscrito) {
+                MaterialEscrito me = (MaterialEscrito) encontrado;
+                me.setAutor(autor);
+                me.setGenero(genero);
+            } else {
+                // Lo cambiamos por uno Escrito si antes era otro tipo
+                MaterialEscrito nuevo = new MaterialEscrito(
+                    codigo, titulo, anio, "Escrito", autor, genero
+                );
+                listaMateriales.remove(encontrado);
+                listaMateriales.add(nuevo);
+            }
+
+        } else { // AUDIOVISUAL
+
+            String formato = txtFormato.getText().trim();
+            String durTxt = txtDuracion.getText().trim();
+
+            if (formato.isEmpty() || durTxt.isEmpty()) {
+                JOptionPane.showMessageDialog(this, 
+                        "Debe completar Formato y Duración.", 
+                        "Validación", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            int duracion = Integer.parseInt(durTxt);
+
+            if (encontrado instanceof MaterialAudiovisual) {
+                MaterialAudiovisual ma = (MaterialAudiovisual) encontrado;
+                ma.setFormato(formato);
+                ma.setDuracion(duracion);
+            } else {
+                // Lo cambiamos por uno Audiovisual si antes era Escrito
+                MaterialAudiovisual nuevo = new MaterialAudiovisual(
+                    codigo, titulo, anio, "Audiovisual", formato, duracion
+                );
+                listaMateriales.remove(encontrado);
+                listaMateriales.add(nuevo);
+            }
+        }
+
+        JOptionPane.showMessageDialog(this, 
+                "Material actualizado correctamente.", 
+                "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+    } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(this, 
+                "Año y Duración deben ser valores numéricos.", 
+                "Error", JOptionPane.ERROR_MESSAGE);
+    } catch (Exception ex) {
+        JOptionPane.showMessageDialog(this, 
+                "Ocurrió un error al actualizar: " + ex.getMessage(), 
+                "Error", JOptionPane.ERROR_MESSAGE);
+    }// TODO add your handling code here:
+    }//GEN-LAST:event_btnActualizarActionPerformed
+
+    private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
+         txtCodigo.setText("");
+    txtTitulo.setText("");
+    txtAnio.setText("");
+
+    // Campos de ESCRITO
+    txtAutor.setText("");
+    txtGenero.setText("");
+
+    // Campos de AUDIOVISUAL
+    txtFormato.setText("");
+    txtDuracion.setText("");
+
+    // Regresar el combo al primer valor
+    jComboBox1.setSelectedIndex(0);
+
+    // Mostrar el panel correcto
+    java.awt.CardLayout cl = (java.awt.CardLayout) panelDetalles.getLayout();
+    cl.show(panelDetalles, "escrito");// TODO add your handling code here:
+    }//GEN-LAST:event_btnLimpiarActionPerformed
 
     /**
      * @param args the command line arguments

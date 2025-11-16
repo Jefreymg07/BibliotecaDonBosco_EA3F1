@@ -22,6 +22,14 @@ public abstract class Material {
     public void setTitulo(String titulo){ this.titulo = titulo; }
     public void setAnio(int anio){ this.anio = anio; }
 
+    public void setCodigo(String codigo){
+    this.codigo = codigo;
+}
+
+public void setTipo(String tipo){
+    this.tipo = tipo;
+}
+
     // cada subclase devuelve una descripción para la tabla
     public abstract String getInformacion();
 }
