@@ -1,13 +1,12 @@
-package sv.edu.udb.biblioteca;
+package sv.edu.udb.form;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 
 public class PrestamoForm extends javax.swing.JFrame {
 
-    private PrestamoDAO prestamoDAO = new PrestamoDAO();
+    private final PrestamoDAO dao = new PrestamoDAO();
 
     public PrestamoForm() {
         initComponents();
@@ -15,82 +14,50 @@ public class PrestamoForm extends javax.swing.JFrame {
         cargarMateriales();
     }
 
-    private void btnRegistrarPrestamoActionPerformed(java.awt.event.ActionEvent evt) {
-
-        try {
-            Usuario usuario = (Usuario) cbUsuarios.getSelectedItem();
-            if (usuario == null) {
-                JOptionPane.showMessageDialog(this, "Debe seleccionar un usuario.");
-                return;
-            }
-
-            Material material = (Material) cbMateriales.getSelectedItem();
-            if (material == null) {
-                JOptionPane.showMessageDialog(this, "Debe seleccionar un material.");
-                return;
-            }
-
-            if (material.getCantidadDisponible() <= 0) {
-                JOptionPane.showMessageDialog(this, "Este material no tiene unidades disponibles.");
-                return;
-            }
-
-            if (prestamoDAO.usuarioTienePrestamoActivo(usuario.getId(), material.getId())) {
-                JOptionPane.showMessageDialog(this, "Este usuario ya tiene un préstamo activo del mismo material.");
-                return;
-            }
-
-            int dias = (int) spDias.getValue();
-            if (dias < 1 || dias > 30) {
-                JOptionPane.showMessageDialog(this, "Los días deben estar entre 1 y 30.");
-                return;
-            }
-
-            LocalDate fechaPrestamo = LocalDate.now();
-            LocalDate fechaLimite = fechaPrestamo.plusDays(dias);
-
-            boolean exito = prestamoDAO.registrarPrestamo(
-                    usuario.getId(),
-                    material.getId(),
-                    fechaPrestamo,
-                    fechaLimite
-            );
-
-            if (exito) {
-                JOptionPane.showMessageDialog(this, "Préstamo registrado.");
-                cargarMateriales();
-            } else {
-                JOptionPane.showMessageDialog(this, "No se pudo registrar.");
-            }
-
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Error:\n" + ex.getMessage());
-        }
-    }
-
     private void cargarUsuarios() {
         try {
-            DefaultComboBoxModel<Usuario> model = new DefaultComboBoxModel<>();
-            for (Usuario u : prestamoDAO.listarUsuarios()) {
-                model.addElement(u);
+            for (String u : dao.listarUsuarios()) {
+                comboUsuarios.addItem(u);
             }
-            cbUsuarios.setModel(model);
-
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error cargando usuarios.");
+            JOptionPane.showMessageDialog(this, "Error cargando usuarios: " + e.getMessage());
         }
     }
 
     private void cargarMateriales() {
         try {
-            DefaultComboBoxModel<Material> model = new DefaultComboBoxModel<>();
-            for (Material m : prestamoDAO.listarMateriales()) {
-                model.addElement(m);
+            for (String m : dao.listarMaterialesDisponibles()) {
+                comboMateriales.addItem(m);
             }
-            cbMateriales.setModel(model);
-
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error cargando materiales.");
+            JOptionPane.showMessageDialog(this, "Error cargando materiales: " + e.getMessage());
+        }
+    }
+
+    private void btnRegistrarPrestamoActionPerformed(java.awt.event.ActionEvent evt) {
+
+        try {
+            String usuarioSel = comboUsuarios.getSelectedItem().toString();
+            String materialSel = comboMateriales.getSelectedItem().toString();
+
+            int usuarioId = Integer.parseInt(usuarioSel.split("-")[0]);
+            int materialId = Integer.parseInt(materialSel.split("-")[0]);
+
+            LocalDate hoy = LocalDate.now();
+            LocalDate limite = hoy.plusDays(7);
+
+            boolean exito = dao.registrarPrestamo(usuarioId, materialId, hoy, limite);
+
+            if (exito) {
+                JOptionPane.showMessageDialog(this, "Préstamo registrado.");
+                comboMateriales.removeAllItems();
+                cargarMateriales();
+            } else {
+                JOptionPane.showMessageDialog(this, "No se pudo registrar el préstamo.");
+            }
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
         }
     }
 }
